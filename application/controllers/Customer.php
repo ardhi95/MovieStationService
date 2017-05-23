@@ -26,8 +26,8 @@ class Customer extends MY_Controller {
         }else{
             $cstmr = $this->m_cust->get();
         }*/
-        $id= "CTM002";
-        $cstmr = $this->m_cust->get($id,$cust_code);
+        /*$id= "CTM002";*/
+        $cstmr = $this->m_cust->get($cust_code);
         $res = array();
         foreach ($cstmr as $key) {
             $res[] = array( 
@@ -43,109 +43,32 @@ class Customer extends MY_Controller {
         $this->_api(JSON_SUCCESS, "Success Get Data Customer", $res);
 	}
 
-    public function insert(){        
-        $nm = $this->post('nama_makanan');
-        $config = array();
-        $config['max_size'] = '3072';
-        $config['allowed_types'] = 'jpeg|jpg|png';
-        $config['overwrite']     = TRUE; 
-        $config['upload_path']   = './assets/upload/Makanan/';
-        $config['file_name']     = $nm.'.png';
-        if (!file_exists($config["upload_path"])) {
-            mkdir($config["upload_path"]);
-        }
-        $this->load->library('upload');
-        $this->upload->initialize($config);
+
+public function update_akun()
+    {
+        $id_customer =   $this->post('id_customer');
+        if ($id_customer) {
+
         $data = array(
-            'id_makanan'        => $this->post('id_makanan'),
-            'nama_makanan'      => $this->post('nama_makanan'),
-            'jenis'             => $this->post('jenis'),
-            'kkal'              => $this->post('kkal'),
-            'karbo'             => $this->post('karbo'),
-            'protein'           => $this->post('protein'),
-            'lemak'             => $this->post('lemak'),            
-            'keterangan'        => $this->post('keterangan'),
+            'no_hp'    => $this->post('no_hp')
         );
-        $where1 = $this->m_cust->count(array('nama_makanan' => $this->post('nama_makanan')));
-        if ($where1 > 0) {
-            $this->_api(JSON_ERROR, "Data Telah Tersedia");
-        }else{
-            $insert = $this->m_cust->insert($data);
-            if ($insert) {
-                //$this->_api(JSON_SUCCESS, "Success Insert Data", $data);
-                if (isset($_FILES["foto"]) && $_FILES["foto"] != NULL) {
-                    if (!$this->upload->do_upload("foto")) {
-                        $this->_api(JSON_ERROR, "Insert Foto Gagal");
-                        exit(0);
-                    }
+
+            if ($data != NULL) {
+                $update = $this->m_cust->update($data, $id_customer);
+                if ($update) {
+                    $this->_api(JSON_SUCCESS, "Success Update");
+                } else {
+                    $this->_api(JSON_ERROR, "Failed Update 1, check your input data");
                 }
-                $this->_api(JSON_SUCCESS, "Success Insert Data", $data);
             } else {
-                $this->_api(JSON_ERROR, "Insert Data Gagal");
-            }
-        }
+                $this->_api(JSON_ERROR, "Failed Update 2, because data null");
+                }
+           } else {
+        $this->_api(JSON_ERROR, "Failed Update 3, in where clause");
+       }
     }
 
-    public function update(){
-        $nm = $this->post('nama_makanan');
-
-        $lokasi   = './assets/upload/Makanan/';
-
-        $nama = $this->m_cust->get($this->post("id_makanan"));
-        $flold = "";
-        if(isset($nama[0])){
-            $flold = $lokasi.$nama[0]->nama_makanan.'.png';
-        }
-        $flnew = $lokasi.$nm.'.png';
-
-        $data = array(                        
-            'nama_makanan'      => $this->post('nama_makanan'),
-            'jenis'             => $this->post('jenis'),
-            'kkal'              => $this->post('kkal'),
-            'karbo'             => $this->post('karbo'),
-            'protein'           => $this->post('protein'),
-            'lemak'             => $this->post('lemak'),            
-            'keterangan'        => $this->post('keterangan'),
-        );
-
-        $update = $this->m_cust->update($data, $this->post("id_makanan"));
-        if ($update) {
-            if(file_exists($flold) && !empty($flold)){
-                rename($flold, $flnew);
-            }
-            if (isset($_FILES["foto"]) && $_FILES["foto"] != NULL) {
-                $config = array();
-                $config['max_size'] = '3072';
-                $config['allowed_types'] = 'jpeg|jpg|png';
-                $config['overwrite']     = TRUE; 
-                $config['upload_path']   = './assets/upload/Makanan/';
-                $config['file_name']     = $nm.'.png';
-                if (!file_exists($config["upload_path"])) {
-                    mkdir($config["upload_path"]);
-                }
-                $this->load->library('upload');
-                $this->upload->initialize($config);
-
-                if (!$this->upload->do_upload("foto")) {
-                    $this->_api(JSON_ERROR, "Insert Foto Gagal");
-                    exit(0);
-                }
-            }
-            $this->_api(JSON_SUCCESS, "Success Update Data");
-        } else {
-            $this->_api(JSON_ERROR, "Update Data Gagal");
-        }
-        }
-
-    public function delete(){
-        $delete = $this->m_cust->delete($this->post("id_makanan"));
-        if ($delete) {
-            $this->_api(JSON_SUCCESS, "Success Delete Data");
-        } else {
-            $this->_api(JSON_ERROR, "Delete Data Gagal");
-        }
-    }
-
+    
 
     public function register()
     {
