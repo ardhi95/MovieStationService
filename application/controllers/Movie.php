@@ -18,6 +18,23 @@ class Movie extends MY_Controller {
 		}
 	}
 
+    public function getMovieTic()
+    {
+        $movie_code =   $this->post('id_bioskop');
+        /*$movie_code = "BS001";*/
+        $movie = $this->m_movie->get_movie_tic($movie_code);
+        $res = array();
+        foreach ($movie->result() as $key) {
+            $res[] = array( 
+                "nama_film"     => $key->nama_film,
+                "harga"         => $key->harga,
+                "id_bioskop"    => $key->id_bioskop,
+                "id_movie"      => $key->id_movie,
+                "id_jadwal"    => $key->id_jadwal
+                );
+        }
+        $this->_api(JSON_SUCCESS, "Success Get Data saldo", $res);    }
+
 	public function get_movie()
 	{
 		$movie_code =   $this->post('imdbID');

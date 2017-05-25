@@ -32,6 +32,30 @@ class MY_Model extends CI_Model {
         $result = $this->get_object($condition, $select)->result();
         return $result;
     }
+
+    public function get_bioskop()
+    {
+        /*$query = ("SELECT bioskop.nama_bioskop, bioskop.alamat, manager_register.picture_url FROM bioskop INNER JOIN manager_register ON bioskop.id_manager = manager_register.id");*/
+        $this->db->select('bioskop.id_bioskop, bioskop.nama_bioskop, bioskop.alamat, manager_register.picture_url');
+        $this->db->from($this->table);
+        $this->db->join('manager_register', 'bioskop.id_manager = manager_register.id');
+        /*$this->db->where($this->pri_index, $condition);*/
+        $result = $this->db->get();
+        return $result;
+    }
+
+    public function get_movie_tic($condition)
+    {
+        $this->db->select('count(nama_film),nama_film , harga, id_bioskop, id_movie, id_jadwal ' );
+        $this->db->from($this->table);
+        $this->db->where('id_bioskop', $condition);
+        $this->db->group_by('nama_film');
+        // $this->db->Groub_BY('nama_film');
+        // $this->db->
+        $result = $this->db->get();
+        return $result;
+    }
+
     public function insert($data){
         $result = $this->db->insert($this->table, $data);
         return $result;

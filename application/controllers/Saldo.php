@@ -50,7 +50,8 @@ public function getHistorySaldo()
                 "id_transaksi_saldo"   => $key->id_transaksi_saldo,
                 'jumlah_saldo'         => $key->jumlah_saldo,
                 'tanggal'              => $key->tanggal,
-                'id_customer'          => $key->id_customer
+                'id_customer'          => $key->id_customer,
+                'status'          => $key->status
             );
         }
         $this->_api(JSON_SUCCESS, "Success Get Data saldo", $res);

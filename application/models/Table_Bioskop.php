@@ -1,13 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Table_Olahraga extends MY_Model {
+class Table_Bioskop extends MY_Model {
 
 	public function __construct()
 	{
 		parent::__construct();
-		$this->table = "olahraga";
-        $this->pri_index = "id_olahraga";
+		$this->table = "bioskop";
+        $this->pri_index = "id_bioskop";
         $this->format_pk = "";
 	}
 

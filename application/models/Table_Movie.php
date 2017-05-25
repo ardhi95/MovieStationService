@@ -6,8 +6,8 @@ class Table_Movie extends MY_Model {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->table = "movie_new";
-        $this->pri_index = "imdbID";
+		$this->table = "movie";
+        $this->pri_index = "id_movie";
         $this->format_pk = "";
 	}
 
