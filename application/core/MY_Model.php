@@ -44,9 +44,15 @@ class MY_Model extends CI_Model {
         return $result;
     }
 
+    public function getJadwal($condition, $condition2)
+    {
+        $query = 'SELECT id_jadwal, jam, type_theater, kuota,tgl_mulai, tgl_selesai FROM jadwal WHERE id_bioskop = '.'"'.$condition.'"'.' AND id_movie = '.'"'.$condition2.'"'.'';
+        $result = $this->db->query($query);
+        return $result;
+    }
+
     public function get_movie_tic($condition)
     {
-        /*$query = $this->db->query("SELECT jadwal.id_jadwal, movie_new.Title, jadwal.jam, jadwal.type_theater, jadwal.kuota, jadwal.tgl_mulai, jadwal.tgl_selesai FROM jadwal INNER JOIN movie_new ON jadwal.id_movie = movie_new.id_movie WHERE jadwal.id_bioskop = '$kode_bioskop'");*/
         $this->db->select('COUNT(jadwal.id_movie),jadwal.id_bioskop,jadwal.harga,jadwal.id_movie,jadwal.id_jadwal,movie_new.Poster, movie_new.Title, jadwal.jam, jadwal.type_theater, jadwal.kuota, jadwal.tgl_mulai, jadwal.tgl_selesai' );
         $this->db->from('jadwal');
         $this->db->JOIN('movie_new','movie_new ON jadwal.id_movie = movie_new.id_movie');
@@ -80,69 +86,6 @@ class MY_Model extends CI_Model {
         }
         $result = $this->db->delete($this->table);
         return $result;
-    }
-    public function count($condition = NULL, $select = NULL){
-        $result = $this->get_object($condition, $select)->num_rows();
-        return $result;
-    }
-    public function sum($select_sum, $condition = NULL){
-        $this->db->select_sum($select_sum);
-        $result = $this->get($condition);
-        return $result;
-    }
-
-    public function sum_day($select_sum, $condition = NULL, $condition2 = NULL){
-        $this->db->select_sum($select_sum);
-        $result = $this->get($condition);
-        $result = $this->get($condition2);
-        return $result;
-    }
-
-    public function saran($kal = NULL, $table = NULL){        
-        $this->db->where("kkal <", $kal);
-        $result = $this->db->get($table);
-        return $result->result();
-    }
-
-    public function rawQuery($query){
-        $result = $this->db->query($query);
-        return $result;
-    }
-    
-    public function getNewIndex()
-    {
-        $this->db->limit(1);
-        $this->db->select($this->pri_index." as pri_index");
-        $this->db->from($this->table);
-        $this->db->order_by($this->pri_index, "DESC");
-        $q = $this->db->get();
-        $fix_pk = "";
-        $id = 1;
-        if ($q->num_rows() > 0) {
-            $q = $q->row();
-            $id = intval(substr($q->pri_index, strlen($this->format_pk)));
-            $id += 1;
-            if ($id < 10) {
-                $fix_pk = $this->format_pk."0000000".$id;
-            }elseif ($id < 100) {
-                $fix_pk = $this->format_pk."000000".$id;
-            }elseif ($id < 1000) {
-                $fix_pk = $this->format_pk."00000".$id;
-            }elseif ($id < 10000) {
-                $fix_pk = $this->format_pk."0000".$id;
-            }elseif ($id < 100000) {
-                $fix_pk = $this->format_pk."000".$id;
-            }elseif ($id < 1000000) {
-                $fix_pk = $this->format_pk."00".$id;
-            }elseif ($id < 10000000) {
-                $fix_pk = $this->format_pk."0".$id;
-            }elseif ($id < 100000000) {
-                $fix_pk = $this->format_pk."".$id;
-            }
-        }else{
-            $fix_pk = $this->format_pk."0000000".$id;
-        }
-        return $fix_pk;
     }
 
 }

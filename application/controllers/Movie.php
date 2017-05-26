@@ -17,6 +17,25 @@ class Movie extends MY_Controller {
 			$this->_api(JSON_ERROR, "No Method ".$this->method." in Class Movie");
 		}
 	}
+    public function getJadwalMovie()
+    {
+        $bioskop_code = $this->post('id_bioskop');
+        $movie_code = $this->post('id_movie');
+
+        $jadwal = $this->m_movie->getJadwal($bioskop_code, $movie_code);
+        $res = array();
+        foreach ($jadwal->result() as $key) {
+                $res[] = array(
+                    "id_jadwal"     => $key->id_jadwal,
+                    "jam"           => $key->jam,
+                    "type_theater"  => $key->type_theater,
+                    "kuota"         => $key->kuota,
+                    "tgl_mulai"     => $key->tgl_mulai,
+                    "tgl_selesai"   => $key->tgl_selesai
+                    );
+        }
+        $this->_api(JSON_SUCCESS, "Success Get Data Jadwal",$res);
+    }
 
     public function getMovieTic()
     {
@@ -31,14 +50,15 @@ class Movie extends MY_Controller {
                 "id_bioskop"   => $key->id_bioskop,
                 "Poster"       => $key->Poster,
                 "Title"        => $key->Title,
-                "jam"          => $key->type_theater,
+                "type_theater" => $key->type_theater,
+                "jam"          => $key->jam,
                 "kuota"        => $key->kuota,
                 "harga"        => $key->harga,
                 "tgl_mulai"    => $key->tgl_mulai,
                 "tgl_selesai"  => $key->tgl_selesai
                 );
         }
-        $this->_api(JSON_SUCCESS, "Success Get Data saldo", $res);    }
+        $this->_api(JSON_SUCCESS, "Success Get Data Tiket", $res);    }
 
 	public function get_movie()
 	{
