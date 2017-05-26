@@ -46,10 +46,13 @@ class MY_Model extends CI_Model {
 
     public function get_movie_tic($condition)
     {
-        $this->db->select('count(nama_film),nama_film , harga, id_bioskop, id_movie, id_jadwal ' );
-        $this->db->from($this->table);
-        $this->db->where('id_bioskop', $condition);
-        $this->db->group_by('nama_film');
+        /*$query = $this->db->query("SELECT jadwal.id_jadwal, movie_new.Title, jadwal.jam, jadwal.type_theater, jadwal.kuota, jadwal.tgl_mulai, jadwal.tgl_selesai FROM jadwal INNER JOIN movie_new ON jadwal.id_movie = movie_new.id_movie WHERE jadwal.id_bioskop = '$kode_bioskop'");*/
+        $this->db->select('COUNT(jadwal.id_movie),jadwal.id_bioskop,jadwal.harga,jadwal.id_movie,jadwal.id_jadwal,movie_new.Poster, movie_new.Title, jadwal.jam, jadwal.type_theater, jadwal.kuota, jadwal.tgl_mulai, jadwal.tgl_selesai' );
+        $this->db->from('jadwal');
+        $this->db->JOIN('movie_new','movie_new ON jadwal.id_movie = movie_new.id_movie');
+        $this->db->where('jadwal.id_bioskop', $condition);
+
+        $this->db->group_by('jadwal.id_movie');
         // $this->db->Groub_BY('nama_film');
         // $this->db->
         $result = $this->db->get();

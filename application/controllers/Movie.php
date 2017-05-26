@@ -26,11 +26,16 @@ class Movie extends MY_Controller {
         $res = array();
         foreach ($movie->result() as $key) {
             $res[] = array( 
-                "nama_film"     => $key->nama_film,
-                "harga"         => $key->harga,
-                "id_bioskop"    => $key->id_bioskop,
-                "id_movie"      => $key->id_movie,
-                "id_jadwal"    => $key->id_jadwal
+                "id_movie"     => $key->id_movie,
+                "id_jadwal"    => $key->id_jadwal,
+                "id_bioskop"   => $key->id_bioskop,
+                "Poster"       => $key->Poster,
+                "Title"        => $key->Title,
+                "jam"          => $key->type_theater,
+                "kuota"        => $key->kuota,
+                "harga"        => $key->harga,
+                "tgl_mulai"    => $key->tgl_mulai,
+                "tgl_selesai"  => $key->tgl_selesai
                 );
         }
         $this->_api(JSON_SUCCESS, "Success Get Data saldo", $res);    }
