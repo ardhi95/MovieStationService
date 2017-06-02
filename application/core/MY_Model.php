@@ -33,6 +33,15 @@ class MY_Model extends CI_Model {
         return $result;
     }
 
+    public function getTicket($condition)
+    {
+        $this->db->from('pembelian_tiket');
+        $this->db->where('id_customer',$condition);
+        $this->db->ORDER_BY('tgl_beli','DESC');
+        $result = $this->db->get();
+       return $result;
+    }
+
     public function get_bioskop()
     {
         /*$query = ("SELECT bioskop.nama_bioskop, bioskop.alamat, manager_register.picture_url FROM bioskop INNER JOIN manager_register ON bioskop.id_manager = manager_register.id");*/
@@ -46,7 +55,7 @@ class MY_Model extends CI_Model {
 
     public function getJadwal($condition, $condition2)
     {
-        $query = 'SELECT id_jadwal, jam, type_theater, kuota,tgl_mulai, tgl_selesai FROM jadwal WHERE id_bioskop = '.'"'.$condition.'"'.' AND id_movie = '.'"'.$condition2.'"'.'';
+        $query = 'SELECT id_jadwal, id_bioskop ,id_movie, jam, type_theater, kuota,tgl_mulai, tgl_selesai, harga FROM jadwal WHERE id_bioskop = '.'"'.$condition.'"'.' AND id_movie = '.'"'.$condition2.'"'.'';
         $result = $this->db->query($query);
         return $result;
     }
@@ -61,6 +70,15 @@ class MY_Model extends CI_Model {
         $this->db->group_by('jadwal.id_movie');
         // $this->db->Groub_BY('nama_film');
         // $this->db->
+        $result = $this->db->get();
+        return $result;
+    }
+
+    public function checkTikeKursi($condition)
+    {
+        $this->db->SELECT('id_kursi');
+        $this->db->FROM($this->table);
+        $this->db->WHERE('id_jadwal', $condition);
         $result = $this->db->get();
         return $result;
     }

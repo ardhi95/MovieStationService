@@ -27,11 +27,14 @@ class Movie extends MY_Controller {
         foreach ($jadwal->result() as $key) {
                 $res[] = array(
                     "id_jadwal"     => $key->id_jadwal,
+                    "id_movie"      => $key->id_movie,
+                    "id_bioskop"    => $key->id_bioskop,
                     "jam"           => $key->jam,
                     "type_theater"  => $key->type_theater,
                     "kuota"         => $key->kuota,
                     "tgl_mulai"     => $key->tgl_mulai,
-                    "tgl_selesai"   => $key->tgl_selesai
+                    "tgl_selesai"   => $key->tgl_selesai,
+                    "harga"         => $key->harga
                     );
         }
         $this->_api(JSON_SUCCESS, "Success Get Data Jadwal",$res);
@@ -62,7 +65,7 @@ class Movie extends MY_Controller {
 
 	public function get_movie()
 	{
-		$movie_code =   $this->post('imdbID');
+		$movie_code =   $this->post('id_movie');
 		if ($movie_code != "") {
             $movie = $this->m_movie->get($movie_code);
         }else{
@@ -71,7 +74,7 @@ class Movie extends MY_Controller {
         $res = array();
         foreach ($movie as $key) {
             $res[] = array( 
-                "imdbID"      	=> $key->imdbID,
+                "id_movie"      	=> $key->id_movie,
                 'Title'			=> $key->Title,
                 'Production'	=> $key->Production,
                 'Year'			=> $key->Year,
