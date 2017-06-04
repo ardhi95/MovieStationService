@@ -33,6 +33,12 @@ class MY_Model extends CI_Model {
         return $result;
     }
 
+    public function statusTic($condition)
+    {
+      $result = $this->db->query('SELECT status FROM pembelian_tiket WHERE id_pembelian = '.'"'.$condition.'"');
+        return $result;   
+    }
+
     public function getTicket($condition)
     {
         $this->db->from('pembelian_tiket');
@@ -74,12 +80,13 @@ class MY_Model extends CI_Model {
         return $result;
     }
 
-    public function checkTikeKursi($condition)
+    public function checkTikeKursi($condition, $condition2)
     {
-        $this->db->SELECT('id_kursi');
+        /*$this->db->SELECT('id_kursi');
         $this->db->FROM($this->table);
         $this->db->WHERE('id_jadwal', $condition);
-        $result = $this->db->get();
+        $this->db->AND('tgl_beli', $condition2);*/
+        $result = $this->db->query('SELECT id_kursi FROM pembelian_tiket WHERE id_jadwal = '.'"'.$condition.'"'.' AND tgl_beli = '.'"'.$condition2.'"'.' ');
         return $result;
     }
 

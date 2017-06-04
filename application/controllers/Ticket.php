@@ -18,6 +18,48 @@ class Ticket extends MY_Controller {
 		}
 	}
 
+    public function statusTicket()
+    {
+        $pem_code = $this->post('id_pembelian');
+        $chck = $this->m_ticket->statusTic($pem_code);
+        $res = array();
+        foreach ($chck->result() as $key) {
+            $res[] = array(
+                'status'    => $key->status
+                );
+        }
+        if ($res) {
+           $this->_api(JSON_SUCCESS, "Success Get Data", $res);
+        } else {
+            $this->_api(JSON_ERROR, "ANda Belum Membeli Tiket");
+        }
+           
+    }
+
+    public function updateTicket()
+    {
+        $pem_code = $this->post('id_pembelian');
+        if ($pem_code) {
+
+        $data = array(
+            'status'    => $this->post('status')
+        );
+
+            if ($data != NULL) {
+                $update = $this->m_ticket->update($data, $pem_code);
+                if ($update) {
+                    $this->_api(JSON_SUCCESS, "Success Update");
+                } else {
+                    $this->_api(JSON_ERROR, "Failed Update 1, check your input data");
+                }
+            } else {
+                $this->_api(JSON_ERROR, "Failed Update 2, because data null");
+                }
+           } else {
+        $this->_api(JSON_ERROR, "Failed Update 3, in where clause");
+       }
+    }
+
     public function getTicketCust()
     {
         $cust_id = $this->post('id_customer');
@@ -42,7 +84,8 @@ class Ticket extends MY_Controller {
     public function checkTiket()
     {
         $jadwalID = $this->post('id_jadwal');
-        $chck = $this->m_ticket->checkTikeKursi($jadwalID);
+        $tglbeli   = $this->post('tgl_beli');
+        $chck = $this->m_ticket->checkTikeKursi($jadwalID, $tglbeli);
         $res = array();
         foreach ($chck->result() as $key) {
             $res[] = array(
@@ -54,7 +97,6 @@ class Ticket extends MY_Controller {
 
     public function addTicket()
     {
-
         $data = array(
                 'id_pembelian'    => "",
                 'id_jadwal'       => $this->post('id_jadwal'),
@@ -66,21 +108,22 @@ class Ticket extends MY_Controller {
                 'jml_uang'        => $this->post('jml_uang'),
                 'status'          => "0"
                 );
-            
+                
+                $sub = $this->post('sub_total');
+                            
                 $insert = $this->m_ticket->insert($data);
                 if ($insert) {
                     $getSaldoCs = $this->db->query('SELECT saldo FROM customer WHERE id_customer="'.$data['id_customer'].'"')->row();
-                    /*$getSaldoBs = $this->db->query('SELECT manager_register.saldo FROM manager_register INNER JOIN bioskop ON manager_register.id = bioskop.id_manager WHERE bioskop.id_bioskop ="'.$data['id_bioskop'].'"')->row();
-                    $getIdM = $this->db->query('SELECT manager_register.id FROM manager_register INNER JOIN bioskop ON manager_register.id = bioskop.id_manager WHERE bioskop.id_bioskop = "'.$data['id_bioskop'].'"')->row();*/
+                    $getSaldoBs = $this->db->query('SELECT manager_register.saldo FROM manager_register INNER JOIN bioskop ON manager_register.id = bioskop.id_manager WHERE bioskop.id_bioskop ="'.$data['id_bioskop'].'"')->row();
 
                     if (is_object($getSaldoCs)) {
                         $upsaldo = ($getSaldoCs->saldo) - ($data['jml_uang']);
                         $this->db->query('Update customer set saldo="'.$upsaldo.'" Where id_customer="'.$data['id_customer'].'"'); 
                     }
-                    /*if (is_object($getSaldoBs)) {
-                        $upsaldoB = ($getSaldoBs->saldo) + ($data['jml_uang']);
-                        $this->db->query('UPDATE manager_register SET saldo="'.$upsaldoB.'" WHERE id="'.$getIdM.'"'); 
-                    }*/
+                    if (is_object($getSaldoBs)) {
+                        $upsaldoB = ($getSaldoBs->saldo) + ($sub);
+                        $this->db->query('UPDATE manager_register JOIN bioskop ON bioskop.id_manager = manager_register.id SET saldo="'.$upsaldoB.'" WHERE bioskop.id_bioskop="'.$data['id_bioskop'].'"'); 
+                    }
                     $this->_api(JSON_SUCCESS, "Success Add", $data);
                 } else {
                     $this->_api(JSON_ERROR, "Failed Add");
