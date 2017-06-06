@@ -34,7 +34,6 @@ class Customer extends MY_Controller {
                 "id_customer"       => $key->id_customer,
                 "email"             => $key->email,
                 "nama"              => $key->nama,
-                "gender"            => $key->gender,
                 "no_hp"             => $key->no_hp,
                 "saldo"             => $key->saldo,
                 "foto"              => $key->foto

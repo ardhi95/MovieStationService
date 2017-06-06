@@ -18,48 +18,6 @@ class Ticket extends MY_Controller {
 		}
 	}
 
-    public function statusTicket()
-    {
-        $pem_code = $this->post('id_pembelian');
-        $chck = $this->m_ticket->statusTic($pem_code);
-        $res = array();
-        foreach ($chck->result() as $key) {
-            $res[] = array(
-                'status'    => $key->status
-                );
-        }
-        if ($res) {
-           $this->_api(JSON_SUCCESS, "Success Get Data", $res);
-        } else {
-            $this->_api(JSON_ERROR, "ANda Belum Membeli Tiket");
-        }
-           
-    }
-
-    public function updateTicket()
-    {
-        $pem_code = $this->post('id_pembelian');
-        if ($pem_code) {
-
-        $data = array(
-            'status'    => $this->post('status')
-        );
-
-            if ($data != NULL) {
-                $update = $this->m_ticket->update($data, $pem_code);
-                if ($update) {
-                    $this->_api(JSON_SUCCESS, "Success Update");
-                } else {
-                    $this->_api(JSON_ERROR, "Failed Update 1, check your input data");
-                }
-            } else {
-                $this->_api(JSON_ERROR, "Failed Update 2, because data null");
-                }
-           } else {
-        $this->_api(JSON_ERROR, "Failed Update 3, in where clause");
-       }
-    }
-
     public function getTicketCust()
     {
         $cust_id = $this->post('id_customer');
@@ -97,6 +55,7 @@ class Ticket extends MY_Controller {
 
     public function addTicket()
     {
+        $this->load->model("Table_Layanan", "m_lay");
         $data = array(
                 'id_pembelian'    => "",
                 'id_jadwal'       => $this->post('id_jadwal'),
@@ -110,7 +69,16 @@ class Ticket extends MY_Controller {
                 );
                 
                 $sub = $this->post('sub_total');
-                            
+        $dataBL = array(
+                'id_trans'      => '',
+                'id_jadwal'     => $this->post('id_jadwal'),
+                'id_customer'   => $this->post('id_customer'),
+                'id_bioskop'    => $this->post('id_bioskop'),
+                'tgl_beli'      => $this->post('tgl_beli'),
+                'biaya_layanan' => $this->post('biaya_layanan')
+                );
+                
+                $this->m_lay->insert($dataBL);
                 $insert = $this->m_ticket->insert($data);
                 if ($insert) {
                     $getSaldoCs = $this->db->query('SELECT saldo FROM customer WHERE id_customer="'.$data['id_customer'].'"')->row();
@@ -124,6 +92,7 @@ class Ticket extends MY_Controller {
                         $upsaldoB = ($getSaldoBs->saldo) + ($sub);
                         $this->db->query('UPDATE manager_register JOIN bioskop ON bioskop.id_manager = manager_register.id SET saldo="'.$upsaldoB.'" WHERE bioskop.id_bioskop="'.$data['id_bioskop'].'"'); 
                     }
+
                     $this->_api(JSON_SUCCESS, "Success Add", $data);
                 } else {
                     $this->_api(JSON_ERROR, "Failed Add");
